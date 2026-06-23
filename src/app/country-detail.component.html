@@ -1,0 +1,134 @@
+<div *ngIf="error" class="error-state">
+  <p class="error-state__title">Country not found</p>
+  <a routerLink="/countries" class="error-state__link">Back to Explorer</a>
+</div>
+
+<div *ngIf="country" class="detail fade-in">
+
+  <!-- Nav -->
+  <nav class="detail__nav">
+    <a class="back-btn" routerLink="/countries">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.75"
+          stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back
+    </a>
+  </nav>
+
+  <!-- Hero split -->
+  <div class="detail__hero">
+
+    <!-- Flag column -->
+    <div class="detail__flag-col">
+      <div class="detail__flag-wrap">
+        <img class="detail__flag"
+          [src]="country!.flags.svg || country!.flags.png"
+          [alt]="country!.name.common + ' flag'" />
+      </div>
+      <div *ngIf="country!.coatOfArms?.svg || country!.coatOfArms?.png" class="detail__coa-wrap">
+        <img class="detail__coa"
+          [src]="country!.coatOfArms.svg || country!.coatOfArms.png"
+          [alt]="country!.name.common + ' coat of arms'" />
+        <span class="detail__coa-lbl">Coat of Arms</span>
+      </div>
+    </div>
+
+    <!-- Info panel -->
+    <div class="detail__info">
+      <div class="detail__title-row">
+        <span class="detail__emoji">{{ country!.flag }}</span>
+        <div>
+          <h1 class="detail__name">{{ country!.name.common }}</h1>
+          <p class="detail__official">{{ country!.name.official }}</p>
+        </div>
+      </div>
+
+      <div class="detail__tags">
+        <span class="tag tag--region">{{ country!.region }}</span>
+        <span *ngIf="country!.subregion" class="tag tag--sub">{{ country!.subregion }}</span>
+        <span *ngIf="!country!.independent" class="tag tag--warn">Non-independent</span>
+        <span *ngIf="country!.landlocked" class="tag tag--muted">Landlocked</span>
+      </div>
+
+      <div class="detail__stats">
+        <div class="ds">
+          <span class="ds__val">{{ country!.population | population }}</span>
+          <span class="ds__lbl">Population</span>
+        </div>
+        <div class="ds">
+          <span class="ds__val">{{ country!.area | area }}</span>
+          <span class="ds__lbl">Area</span>
+        </div>
+        <div class="ds">
+          <span class="ds__val">{{ country!.capital?.[0] || '—' }}</span>
+          <span class="ds__lbl">Capital</span>
+        </div>
+        <div class="ds">
+          <span class="ds__val">{{ country!.continents[0] || '—' }}</span>
+          <span class="ds__lbl">Continent</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail cards grid -->
+  <div class="detail__grid">
+
+    <div class="dcard">
+      <h2 class="dcard__title">Identity</h2>
+      <dl class="ddl">
+        <div class="ddl__row"><dt>ISO Alpha-2</dt><dd>{{ country!.cca2 }}</dd></div>
+        <div class="ddl__row"><dt>ISO Alpha-3</dt><dd>{{ country!.cca3 }}</dd></div>
+        <div class="ddl__row"><dt>TLD</dt><dd>{{ country!.tld?.join(', ') || '—' }}</dd></div>
+        <div class="ddl__row"><dt>FIFA</dt><dd>{{ country!.fifa || '—' }}</dd></div>
+        <div class="ddl__row"><dt>Calling Code</dt><dd>{{ callingCode }}</dd></div>
+        <div class="ddl__row"><dt>Driving Side</dt><dd>{{ country!.car.side | titlecase }}</dd></div>
+        <div class="ddl__row"><dt>Start of Week</dt><dd>{{ country!.startOfWeek | titlecase }}</dd></div>
+      </dl>
+    </div>
+
+    <div class="dcard">
+      <h2 class="dcard__title">Society</h2>
+      <dl class="ddl">
+        <div class="ddl__row"><dt>Languages</dt><dd>{{ languages }}</dd></div>
+        <div class="ddl__row"><dt>Currencies</dt><dd>{{ currencies }}</dd></div>
+        <div class="ddl__row"><dt>Gini Index</dt><dd>{{ gini }}</dd></div>
+        <ng-container *ngIf="country!.demonyms?.['eng']">
+          <div class="ddl__row"><dt>Demonym (m)</dt><dd>{{ country!.demonyms!['eng'].m }}</dd></div>
+          <div class="ddl__row"><dt>Demonym (f)</dt><dd>{{ country!.demonyms!['eng'].f }}</dd></div>
+        </ng-container>
+      </dl>
+    </div>
+
+    <div class="dcard">
+      <h2 class="dcard__title">Geography</h2>
+      <dl class="ddl">
+        <div class="ddl__row">
+          <dt>Coordinates</dt>
+          <dd>{{ country!.latlng[0].toFixed(2) }}°, {{ country!.latlng[1].toFixed(2) }}°</dd>
+        </div>
+        <div class="ddl__row">
+          <dt>Timezones</dt>
+          <dd>{{ country!.timezones.slice(0,2).join(', ') }}{{ country!.timezones.length > 2 ? ' …' : '' }}</dd>
+        </div>
+      </dl>
+      <div class="map-links">
+        <a class="map-link" [href]="country!.maps.googleMaps" target="_blank" rel="noopener">Google Maps</a>
+        <a class="map-link" [href]="country!.maps.openStreetMaps" target="_blank" rel="noopener">OpenStreetMap</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Borders -->
+  <div *ngIf="borders.length" class="borders">
+    <h2 class="borders__title">Bordering Countries</h2>
+    <div class="borders__list">
+      <a *ngFor="let b of borders" class="border-chip" [routerLink]="['/countries', b.cca3]">
+        {{ b.name }}
+      </a>
+    </div>
+  </div>
+
+</div>
